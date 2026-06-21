@@ -26,11 +26,11 @@ const adjustDuplicateCoordinates = (leadsList) => {
     if (coordsMap.has(key)) {
       const count = coordsMap.get(key) + 1;
       coordsMap.set(key, count);
-      
+
       // Distribute overlapping markers in a neat spiral/circle (approx 4-5 meters offset)
       const angle = (count * 2 * Math.PI) / 8;
-      const offsetRadius = 0.00004 * count; 
-      
+      const offsetRadius = 0.00004 * count;
+
       return {
         ...lead,
         latitude: lead.latitude + Math.cos(angle) * offsetRadius,
@@ -47,14 +47,15 @@ export default function App() {
   const [category, setCategory] = useState("dentist");
   const [city, setCity] = useState("Palo Alto");
   const [includeMapsScrape, setIncludeMapsScrape] = useState(false);
-  
+
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   const [selectedLead, setSelectedLead] = useState(null);
   const [hoveredLeadId, setHoveredLeadId] = useState(null);
   const [currentFilter, setCurrentFilter] = useState("all");
+  const [hasPhoneOnly, setHasPhoneOnly] = useState(false);
 
   const [counts, setCounts] = useState({
     total: 0,
@@ -74,6 +75,7 @@ export default function App() {
     setError(null);
     setSelectedLead(null);
     setCurrentFilter("all");
+    setHasPhoneOnly(false);
 
     try {
       const url = new URL(`${API_URL}/api/leads`);
@@ -89,12 +91,12 @@ export default function App() {
       }
 
       const data = await response.json();
-      
+
       // Apply offset to overlapping coordinates
       const adjustedLeads = adjustDuplicateCoordinates(data.leads || []);
-      
+
       setLeads(adjustedLeads);
-      
+
       if (data.summary) {
         setCounts(data.summary);
       } else {
@@ -117,10 +119,31 @@ export default function App() {
     }
   };
 
+  // Derive counts dynamically for the filters
+  const dynamicCounts = {
+    total: leads.filter((l) => !hasPhoneOnly || (l.phone && l.phone !== "N/A" && l.phone.trim() !== "")).length,
+    no_website: leads.filter((l) => l.status === "no_website" && (!hasPhoneOnly || (l.phone && l.phone !== "N/A" && l.phone.trim() !== ""))).length,
+    outdated: leads.filter((l) => l.status === "outdated" && (!hasPhoneOnly || (l.phone && l.phone !== "N/A" && l.phone.trim() !== ""))).length,
+    ok: leads.filter((l) => l.status === "ok" && (!hasPhoneOnly || (l.phone && l.phone !== "N/A" && l.phone.trim() !== ""))).length,
+    unchecked: leads.filter((l) => l.status === "unchecked" && (!hasPhoneOnly || (l.phone && l.phone !== "N/A" && l.phone.trim() !== ""))).length,
+    has_phone: leads.filter((l) => {
+      if (currentFilter !== "all" && l.status !== currentFilter) return false;
+      return l.phone && l.phone !== "N/A" && l.phone.trim() !== "";
+    }).length
+  };
+
   // Filter leads shown in sidebar and on map
   const filteredLeads = leads.filter((lead) => {
-    if (currentFilter === "all") return true;
-    return lead.status === currentFilter;
+    // 1. Status Filter
+    if (currentFilter !== "all" && lead.status !== currentFilter) {
+      return false;
+    }
+    // 2. Phone Filter
+    if (hasPhoneOnly) {
+      const hasPhone = lead.phone && lead.phone !== "N/A" && lead.phone.trim() !== "";
+      if (!hasPhone) return false;
+    }
+    return true;
   });
 
   return (
@@ -135,7 +158,7 @@ export default function App() {
               <Globe className="h-5 w-5" />
             </div>
             <h1 className="text-lg font-bold text-google-textPrimary tracking-tight">
-              Lead Finder <span className="text-google-blue font-semibold text-xs bg-blue-50 border border-blue-100 px-2 py-0.5 rounded ml-1">OSM Maps</span>
+              Lead Finder
             </h1>
           </div>
 
@@ -155,7 +178,9 @@ export default function App() {
           <FilterChips
             currentFilter={currentFilter}
             setCurrentFilter={setCurrentFilter}
-            counts={counts}
+            hasPhoneOnly={hasPhoneOnly}
+            setHasPhoneOnly={setHasPhoneOnly}
+            counts={dynamicCounts}
           />
         </div>
 

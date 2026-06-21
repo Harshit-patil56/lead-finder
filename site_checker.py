@@ -1,5 +1,8 @@
 import re
 import datetime
+import socket
+import ssl
+import urllib.parse
 import requests
 from bs4 import BeautifulSoup
 
@@ -38,6 +41,33 @@ def extract_copyright_year(text_content):
             
     return max(years) if years else None
 
+def check_ssl_expiry(domain, port=443, timeout=5):
+    """
+    Checks the SSL certificate expiration days remaining for a given domain.
+    Returns:
+        int: Number of days until the certificate expires.
+        None: If the check fails or certificate cannot be retrieved.
+    """
+    if not domain or domain.lower() in ("localhost", "127.0.0.1"):
+        return None
+        
+    try:
+        context = ssl.create_default_context()
+        with socket.create_connection((domain, port), timeout=timeout) as sock:
+            with context.wrap_socket(sock, server_hostname=domain) as ssock:
+                cert = ssock.getpeercert()
+                if not cert:
+                    return None
+                expiry_str = cert.get('notAfter')
+                if not expiry_str:
+                    return None
+                expiry_date = datetime.datetime.strptime(expiry_str, '%b %d %H:%M:%S %Y %Z')
+                days_left = (expiry_date - datetime.datetime.now()).days
+                return days_left
+    except Exception as e:
+        print(f"[Site Checker] SSL certificate expiry check failed for {domain}: {e}")
+        return None
+
 def check_website(url):
     """
     Checks the quality of a business website and flags issues.
@@ -56,6 +86,22 @@ def check_website(url):
         
     flags = []
     
+    # Extract domain for socket SSL check
+    try:
+        parsed = urllib.parse.urlparse(url)
+        domain = parsed.netloc.split(':')[0]
+    except Exception:
+        domain = None
+        
+    # Check SSL Expiry
+    if domain:
+        days_left = check_ssl_expiry(domain)
+        if days_left is not None:
+            if days_left <= 0:
+                flags.append("expired_ssl")
+            elif days_left < 15:
+                flags.append(f"ssl_expiring_soon ({days_left} days)")
+    
     # 1. Check HTTPS / SSL
     # If the URL is http, check if we get SSL errors, or if we are redirected to https.
     has_https_support = True
@@ -67,7 +113,7 @@ def check_website(url):
         
         # If we didn't end up on https, we flag no_https
         final_url = response.url
-        if not final_url.startswith("https://"):
+        if not final_url.startswith("https://") and "expired_ssl" not in flags:
             flags.append("no_https")
             
         # Check HTTP Status Code

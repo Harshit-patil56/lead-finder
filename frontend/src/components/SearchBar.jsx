@@ -23,7 +23,7 @@ export default function SearchBar({
       {/* Pill Search Bar */}
       <div className="flex items-center w-full bg-white rounded-full border border-google-border shadow-md hover:shadow-lg transition-shadow duration-200 px-4 py-1.5">
         <Search className="text-google-textSecondary mr-2 h-5 w-5 flex-shrink-0" />
-        
+
         {/* Category Input */}
         <input
           type="text"
@@ -33,12 +33,12 @@ export default function SearchBar({
           className="w-1/2 text-sm text-google-textPrimary placeholder-google-textSecondary bg-transparent border-none outline-none py-1.5 focus:ring-0"
           required
         />
-        
+
         {/* Vertical Separator */}
         <div className="h-6 w-px bg-google-border mx-2"></div>
-        
+
         <MapPin className="text-google-textSecondary mr-1 h-5 w-5 flex-shrink-0" />
-        
+
         {/* City Input */}
         <input
           type="text"
@@ -48,12 +48,12 @@ export default function SearchBar({
           className="w-1/2 text-sm text-google-textPrimary bg-transparent border-none outline-none py-1.5 focus:ring-0 placeholder-google-textSecondary"
           required
         />
-        
+
         {/* Search button */}
         <button
           type="submit"
           disabled={loading}
-          className="bg-google-blue hover:bg-opacity-90 text-white rounded-full p-2 ml-1 flex items-center justify-center transition-colors flex-shrink-0"
+          className="bg-google-blue hover:bg-opacity-90 text-white rounded-full p-2 ml-1 flex items-center justify-center transition-colors flex-shrink-0 cursor-pointer"
         >
           {loading ? (
             <Loader className="h-4 w-4 animate-spin" />

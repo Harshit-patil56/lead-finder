@@ -164,7 +164,7 @@ const MarkerWithPopup = ({ lead, isSelected, hoveredLeadId, onSelectLead }) => {
 
             <button
               onClick={handleCopyAddress}
-              className="flex-1 flex items-center justify-center gap-1 text-xs bg-white hover:bg-google-bgHover text-google-textPrimary border border-google-border font-medium py-1.5 px-2.5 rounded transition-colors duration-150"
+              className="flex-1 flex items-center justify-center gap-1 text-xs bg-white hover:bg-google-bgHover text-google-textPrimary border border-google-border font-medium py-1.5 px-2.5 rounded transition-colors duration-150 cursor-pointer"
             >
               {copied ? (
                 <>

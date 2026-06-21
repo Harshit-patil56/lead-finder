@@ -83,6 +83,7 @@ def scrape_leads_from_maps(category, city_name, max_results=30):
             viewport={"width": 1280, "height": 800},
             locale="en-US"
         )
+        context.add_init_script("Object.defineProperty(navigator, 'webdriver', { get: () => undefined })")
         
         page = context.new_page()
         
