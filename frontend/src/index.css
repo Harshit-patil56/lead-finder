@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  --color-google-blue: #1a73e8;
+  --color-google-textPrimary: #202124;
+  --color-google-textSecondary: #5f6368;
+  --color-google-border: #dadce0;
+  --color-google-bgHover: #f8f9fa;
+  --color-google-red: #ea4335;
+  --color-google-yellow: #fbbc04;
+  --color-google-green: #34a853;
+  
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Custom keyframes for the Google Maps top progress bar loading animation */
+@keyframes loadingBar {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+/* Override Leaflet Popup Styles */
+.leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: #202124 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+  padding: 0 !important;
+  border: 1px solid #dadce0 !important;
+}
+
+.leaflet-popup-content-wrapper a {
+  color: #1a73e8 !important;
+}
+
+.leaflet-popup-content-wrapper a.bg-google-blue {
+  color: #ffffff !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px 16px !important;
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border-left: 1px solid #dadce0 !important;
+  border-bottom: 1px solid #dadce0 !important;
+}
+
+.leaflet-container {
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif !important;
+}
+
+/* Custom Webkit scrollbar for sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #dadce0;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #bdc1c6;
+}

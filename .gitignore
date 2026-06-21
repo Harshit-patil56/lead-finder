@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python test & cache directories
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Node.js dependencies
+node_modules/
+frontend/node_modules/
+
+# Production build outputs
+frontend/dist/
+frontend/build/
+
+# Vite Cache
+frontend/.vite/
+
+# Local configuration files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+frontend/.env
+frontend/.env.local
+
+# Scraped leads data files (prevent committing active lead lists)
+*.csv
+!template.csv
+
+# IDE and OS files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+Thumbs.db
+.DS_Store
